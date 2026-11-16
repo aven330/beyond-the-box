@@ -6,7 +6,7 @@ import pandas as pd
 import random as r
 import matplotlib.pyplot as plt
 
-
+# test to see if clone updates github
 # Raw data without any querying
 
 #'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl'
