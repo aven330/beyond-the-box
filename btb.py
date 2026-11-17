@@ -6,7 +6,7 @@ import pandas as pd
 import random as r
 import matplotlib.pyplot as plt
 
-# test to see if clone updates github
+\
 # Raw data without any querying
 
 #'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl'
@@ -85,8 +85,7 @@ def random_selection():
         # puts the postion dictionary in the overarching dictionary
         random_players_stats_position[position] = random_player_stats
     # returns overarching dictionary
-    #return random_players_stats_position
-    return is_allstar(random_player)
+    return random_players_stats_position
 
 # checks if a player object contains an all star
 # not sure what to do yet if there isn't an all star so currently function is not in use
