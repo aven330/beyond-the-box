@@ -9,21 +9,27 @@ import matplotlib.pyplot as plt
 \
 # Raw data without any querying
 
-#'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl'
-raw_stats = pd.read_csv('downloads/BTB/raw_stats.csv')
+# 'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl'
+raw_stats = pd.read_csv('raw_stats.csv')
 
-#'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'per', 'ts_percent', 'x3p_ar', 'f_tr', 'orb_percent','drb_percent', 'trb_percent', 'ast_percent', 'stl_percent','blk_percent', 'tov_percent', 'usg_percent', 'ows', 'dws', 'ws','ws_48', 'obpm', 'dbpm', 'bpm', 'vorp'
-raw_stats_advanced = pd.read_csv('downloads/BTB/raw_stats_advanced.csv')
+# 'season', 'award', 'player', 'player_id', 'age', 'first', 'pts_won', 'pts_max', 'share', 'winner'
+awards = pd.read_csv('awards.csv')
 
-#'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl', 'ppg', 'apg', 'rpg', 'bpg', 'spg', 'tpg'
-btb = pd.read_csv('downloads/BTB/btb.csv')
+# 'player',  'player_id',  'pos',  'ht_in_in', 'wt', 'birth_date', 'colleges', 'from', 'to', 'debut', 'hof'
+player_career_info = pd.read_csv('player_career_info.csv')
+
+# 'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'per', 'ts_percent', 'x3p_ar', 'f_tr', 'orb_percent','drb_percent', 'trb_percent', 'ast_percent', 'stl_percent','blk_percent', 'tov_percent', 'usg_percent', 'ows', 'dws', 'ws','ws_48', 'obpm', 'dbpm', 'bpm', 'vorp'
+raw_stats_advanced = pd.read_csv('raw_stats_advanced.csv')
+
+# 'season', 'lg', 'player', 'player_id', 'age', 'team', 'pos', 'g', 'gs','mp', 'fg', 'fga', 'fg_percent', 'x3p', 'x3pa', 'x3p_percent', 'x2p','x2pa', 'x2p_percent', 'e_fg_percent', 'ft', 'fta', 'ft_percent', 'orb','drb', 'trb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pts', 'trp_dbl', 'ppg', 'apg', 'rpg', 'bpg', 'spg', 'tpg'
+btb = pd.read_csv('btb.csv')
 
 # querying new dataframe and turns it into a new csv
 # function no longer in use since the csv file has been constructed
 # kept simply for understanding how the csv file was created
 def query_for_selected_attributes():
     # create new dataframe
-    raw_stats = pd.read_csv('downloads/BTB/raw_stats.csv')
+    raw_stats = pd.read_csv('raw_stats.csv')
     raw_stats_per_game = raw_stats
     btb = pd.DataFrame()
     qualified_players = raw_stats
@@ -37,21 +43,36 @@ def query_for_selected_attributes():
     raw_stats_per_game['tpg'] = raw_stats['tov']/raw_stats['g']
     
     
+    
     # query for if a player at any moment played for 50 games and averaged 10 or more points
     qualified_players = qualified_players[qualified_players['g']>50]
     qualified_players = qualified_players[qualified_players['ppg']>10]
     for i in list(set(qualified_players['player_id'])):
         btb =  btb._append(raw_stats_per_game[raw_stats_per_game['player_id'] == i])
+    
+    # adds an is_all_star column to see if it at any point was that player an all star
+    all_star = pd.read_csv('all_star.csv')
+    all_star_list = list(set(all_star['player_id']))
+    is_all_star = []
+    for id in btb['player_id']:
+        if id in all_star_list:
+            is_all_star += [True]
+        else:
+            is_all_star += [False]
+    btb['is_all_star'] = is_all_star
+        
+        
     # creates csv file so we don't have to query for our stats every time the program runs
     # commented out incase new csv file becomes problem and requires the funciton to be run every time
-    btb.to_csv('downloads/BTB/btb.csv', index=True)
+    btb.to_csv('btb.csv', index=True)
 
     return btb
 
 # Randomly selects a player id and returns the players carrer stats
 def random_selection():
     # dataframe containing qualified candidates (created by query_for_selected_attributes() into a csv) 
-    random = pd.read_csv('downloads/BTB/btb.csv')
+    random = pd.read_csv('btb.csv')
+    random_all_star = random
     # dataframe containing qualified candidates (created by query_for_selected_attributes())
     # random = query_for_selected_attributes()
     # NBA positions
@@ -59,7 +80,7 @@ def random_selection():
     # Dictionary containing difficulty modes and how many options you are given in each mode
     difficulty = {'easy':2, 'medium':3, 'hard':5}
     # Tested difficulty
-    selected_difficulty = 'hard'
+    selected_difficulty = 'easy'
     # overarching dictionary with all the players of each position
     random_players_stats_position = {}
     # iterates through each position
@@ -92,11 +113,11 @@ def random_selection():
 def is_allstar(player):
     # csv filled with players who have been allstars 
     # 'player', 'player_id', 'team', 'season', 'lg', 'replaced'
-    all_star = pd.read_csv('downloads/BTB/all_star.csv')
+    all_star = pd.read_csv('all_star.csv')
     all_star_list = list(set(all_star['player_id']))
     if player.player_id in all_star_list:
         return True
     return False
 
 #print(raw_stats[raw_stats['player_id'] == 'abdulka01'])
-print(random_selection())
+print(awards.groupby('award').count())
